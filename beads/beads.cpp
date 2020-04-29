@@ -1,3 +1,8 @@
+/*
+ID: stevenh6
+TASK: beads
+LANG: C++
+*/
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -65,7 +70,12 @@ int main() {
     }
   }
 
-  fout << lg;
+  if (lg >= n) {
+    fout << n << endl;
+  }
+  else {
+    fout << lg << endl;
+  }
 
   return 0;
 }
