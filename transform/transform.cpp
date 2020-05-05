@@ -16,8 +16,18 @@ ifstream fin ("transform.in");
 
 int n;
 
+// void printmatrix(vector<vector<char>> inm) {
+//   for (int i = 0; i < n; i++) {
+//     for (int j = 0; j < n; j++) {
+//       cout << inm[i][j];
+//     }
+//     cout << endl;
+//   }
+// }
+
 vector<vector<char>> rotate(vector<vector<char>> inarr, int c) {
-  vector<vector<char>> ret = inarr;
+  vector<vector<char>> ret(n, vector<char>(n, '-'));
+  ret = inarr;
 
   for (int i = 0; i < c; i++) {
     inarr = ret;
@@ -32,7 +42,8 @@ vector<vector<char>> rotate(vector<vector<char>> inarr, int c) {
 }
 
 vector<vector<char>> reflect(vector<vector<char>> inarr) {
-  vector<vector<char>> ret;
+  vector<vector<char>> ret(n, vector<char>(n, '-'));
+
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       ret[i][j] = inarr[i][n - 1 - j];
@@ -57,58 +68,38 @@ bool compare(vector<vector<char>> before, vector<vector<char>> after) {
 int main() {
   fin >> n;
 
-  vector<vector<char>> original;
-  vector<vector<char>> transform;
+  int ncase = 7;
 
-  cout << "n: " + to_string(n) << endl;
+  vector<vector<char>> original(n, vector<char>(n, '-'));
+  vector<vector<char>> transform(n, vector<char>(n, '-'));
 
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       fin >> original[i][j];
-      cout << original[i][j];
     }
-    cout << endl;
   }
 
   for (int i = 0; i < n; i++) {
     for (int j = 0; j < n; j++) {
       fin >> transform[i][j];
-      cout << transform[i][j];
     }
-    cout << endl;
   }
-
 
   if (compare(original, transform)) {
-    fout << 6 << endl;
-    cout << 6 << endl;
-
-    return 0;
-  }
-
-  if (compare(reflect(original), transform)) {
-    fout << 4 << endl;
-    cout << 4 << endl;
-    return 0;
+    ncase = 6;
+  } else if (compare(reflect(original), transform)) {
+    ncase = 4;
   }
 
   for (int i = 1; i < 4; i++) {
     if (compare(rotate(original, i), transform)) {
-      fout << i << endl;
-      cout << i << endl;
-
-      return 0;
-    }
-
-    if (compare(reflect(rotate(original, i)), transform)) {
-      fout << 5 << endl;
-      cout << 5 << endl;
-
-      return 0;
+      ncase = i;
+      break;
+    } else if (compare(reflect(rotate(original, i)), transform)) {
+      ncase = 5;
     }
   }
-
-  fout << 7 << endl;
-
+  //cout << ncase << endl;
+  fout << ncase << endl;
   return 0;
 }
