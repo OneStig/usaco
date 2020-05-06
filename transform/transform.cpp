@@ -73,7 +73,7 @@ int main() {
   vector<vector<char>> original(n, vector<char>(n, '-'));
   vector<vector<char>> transform(n, vector<char>(n, '-'));
 
-  for (int i = 0; i < n; i++) {
+  for (int i = 0; i < n; i++) { 
     for (int j = 0; j < n; j++) {
       fin >> original[i][j];
     }
