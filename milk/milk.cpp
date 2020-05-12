@@ -9,7 +9,6 @@ LANG: C++
 #include <algorithm>
 
 using namespace std;
-
 ofstream fout ("milk.out");
 ifstream fin ("milk.in");
 

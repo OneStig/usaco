@@ -9,11 +9,9 @@ LANG: C++
 
 using namespace std;
 
+ofstream fout ("test.out");
+ifstream fin ("test.in");
+
 int main() {
-  ofstream fout ("test.out");
-  ifstream fin ("test.in");
-  int a, b;
-  fin >> a >> b;
-  fout << a+b << endl;
-  return 0;
+    return 0;
 }
