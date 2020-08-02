@@ -5,38 +5,79 @@ LANG: C++
 */
 
 #include <fstream>
+#include <iostream>
 #include <string>
-#include <list>
 
 using namespace std;
 
 ofstream fout ("zerosum.out");
 ifstream fin ("zerosum.in");
 
-int N;
+int n;
+int oset[10] = {0};
 
-void search(string s, int k)
+void check()
 {
-    char *p;
+    int sign = 1;
+    int r = 0;
+    int oper = 0;
 
-    if(k == N - 1) {
-        fout << s << endl;
+    for (int i = 1; i <= n - 1; ++i)
+    {
+        oper = oper * 10 + i;
+
+        if (oset[i] == 1) {
+            r += oper * sign;
+            oper = 0;
+            sign = 1;
+        }
+        else if (oset[i] == 2) {
+            r += oper * sign;
+            oper = 0;
+            sign = -1;
+        }
+    }
+    oper = oper * 10 + n;
+    r += oper * sign;
+
+    if (r != 0) {
+        return;
+    }
+    
+    for (int i = 1; i <= n - 1; ++i)
+    {
+        fout << i;
+
+        if (oset[i] == 1) {
+            fout << "+";
+        }
+        else if (oset[i] == 2) {
+            fout << "-";
+        }
+        else if (oset[i] == 0) {
+            fout << " ";
+        }
+    }
+    fout << n << endl;
+}
+
+void search(int pos)
+{
+    if (pos >= n)
+    {
+        check();
+        return;
     }
 
-    //for(p = " +-"; *p; p++) {
-    //    s[2*k+1] = *p;
-    //    search(s, k+1);
-    //}
+    for (int i = 0; i < 3; i++)
+    {
+        oset[pos] = i;
+        search(pos + 1);
+    }
 }
 
 int main()
 {
-    int i;
-    int str;
-
-    fin >> N;
-
-    str = "1 2 3 4 5 6 7 8 9";
-
-    return 0;
+    fin >> n;
+    search(1);
 }
