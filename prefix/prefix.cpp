@@ -7,70 +7,61 @@ LANG: C++
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <vector>
 
 using namespace std;
 
 ofstream fout("prefix.out");
 ifstream fin("prefix.in");
 
-using namespace std;
+int point;
+int cache[200050];
+string read[201];
+string sum;
 
-vector<string> primitives;
-string str;
+int main()
+{
+	string in;
 
-bool dp[210000];
+	while (fin >> in)
+	{
+		if (in == ".")
+		{
+			break;
+		}
 
-
-int main(){
-	while (true){
-		string s;
-		fin >> s;
-
-		if (s == ".") break;
-
-		primitives.push_back(s);
+		read[point] = in;
+		point++;
 	}
 
-	str = "";
+	fin.ignore(1);
 
-    while(true){
-        if (cin.eof()) break;
-        string t;
-        fin >> t;
-
-        str += t;
-    }
-	for (int i = 0; i < 210000; i++)
-		dp[i] = false;
-
-	for (int i = 0; i < primitives.size(); i++){
-		if (primitives[i].length() > str.length()) continue;
-
-		if (str.substr(0, primitives[i].length()) == primitives[i])
-			dp[primitives[i].length()] = true;
+	while (getline(fin, in))
+	{
+		sum += in;
 	}
 
-
-	for (int i = 0; i <= str.length(); i++){
-		if (dp[i]){
-			for (int j = 0; j < primitives.size(); j++){
-
-				if (i + primitives[j].length() > str.length()) continue;
-
-				if (str.substr(i, primitives[j].length()) == primitives[j])
-					dp[i + primitives[j].length()] = true;
+	cache[0] = 1;
+	for (int i = 0; i < sum.length(); i++)
+	{
+		if (cache[i])
+		{
+			for (int j = 0; j < point; j++)
+			{
+				string port = sum.substr(i, read[j].length());
+				if (read[j] == port)
+				{
+					cache[i + read[j].length()] = 1;
+				}
 			}
 		}
 	}
 
-	int maxLength = 0;
-
-	for (int i = 0; i <= str.length(); i++)
-		if (dp[i])
-			maxLength = i;
-
-	fout << maxLength << endl;
-
-	return 0;
+	for (int i = sum.length(); i >= 0; i--)
+	{
+		if (cache[i])
+		{
+			fout << i << endl;
+			return 0;
+		}
+	}
 }
