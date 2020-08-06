@@ -6,57 +6,75 @@ LANG: C++
 
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 
 ofstream fout("concom.out");
 ifstream fin("concom.in");
 
-int children[101][101];
-int parents[101][101];
+int largest = 0;
+int pairs[101][101];
+bool previous[101];
+int ct[101];
 
-void addcontroller(int i, int j)
+
+void traverse(int pairsind)
 {
-    if (parents[i][j]) {
-        return;
-    }
-        
-    parents[i][j] = 1;
-
-    for (int k = 0; k < 101; k++) {
-        children[i][k] += children[j][k];
-    }
-
-    for (int k = 0; k < 101; k++) {
-        if (parents[k][i]) {
-            addcontroller(k, j);
-        }
-    }
-        
-    for (int k = 0; k < 101; k++) {
-        if (children[i][k] > 50) {
-            addcontroller(i, k);
-        }
-    }    
-}
-
-void addowner(int i, int j, int p)
-{
-    int k;
-
-    for (k = 0; k < 101; k++)
-        if (parents[k][i])
-            children[k][j] += p;
-
-    for (k = 0; k < 101; k++)
-        if (children[k][j] > 50)
-            addcontroller(k, j);
-}
-
-int main(void)
-{
-    for (int i = 0; i < 101; i++)
+    if (!previous[pairsind])
     {
-        parents[i][i] = 1;
+        previous[pairsind] = true;
+
+        for (int i = 1; i <= largest; i++)
+        {
+            ct[i] += pairs[pairsind][i];
+            if (ct[i] > 50)
+            {
+                traverse(i);
+            }
+        }
+    }
+}
+
+int main()
+{
+    pairs[0][0] == 0;
+    int n;
+    fin >> n;
+
+    for (int i = 0; i < n; i++)
+    {
+        int a, b, c;
+        fin >> a >> b >> c;
+        if (a > largest) {
+            largest = a;
+        }
+            
+        if (b > largest) {
+            largest = b;
+        }
+            
+        pairs[a][b] = c;
+    }
+
+    for (int i = 1; i <= largest; i++)
+    {
+        int n = largest;
+        
+        while (n > 0) {
+            previous[largest - n + 1] = false;
+            ct[largest - n + 1] = 0;
+            n--;
+        }
+
+        traverse(i);
+
+        for (int j = 1; j <= largest; j++)
+        {
+            if (j != i && ct[j] > 50)
+            {
+                fout << i << " " << j << endl;
+            }
+        }
     }
 }
