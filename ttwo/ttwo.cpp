@@ -1,11 +1,10 @@
 /*
 ID: stevenh6
-TASK: lamps
+TASK: ttwo
 LANG: C++
 */
 
 #include <string>
-#include <iostream>
 #include <fstream>
 #include <set>
 
@@ -14,81 +13,77 @@ using namespace std;
 ifstream fin("ttwo.in");
 ofstream fout("ttwo.out");
 
-char m[12][12];
-int farm_direction = 0;
-int cow_direction = 0;
+char grid[10][10];
 
-set<int> history;
+int deltax[] = {0, 1, 0, -1};
+int deltay[] = {-1, 0, 1, 0};
 
-int makeState()
+void move(int *x, int *y, int *dir)
 {
-    int state = 0;
-    //state = state | (farm.row);
-    //state = state | (farm.col << 4);
-    //state = state | (farm_direction << 8);
-    //state = state | (cow.row << 10);
-    //state = state | (cow.col << 14);
-    state = state | (cow_direction << 18);
-    return state;
+    int nx, ny;
+
+    nx = *x + deltax[*dir];
+    ny = *y + deltay[*dir];
+
+    if (nx < 0 || nx >= 10 || ny < 0 || ny >= 10 || grid[ny][nx] == '*')
+        *dir = (*dir + 1) % 4;
+    else
+    {
+        *x = nx;
+        *y = ny;
+    }
 }
 
 int main()
 {
-    fin.open("ttwo.in");
-    fout.open("ttwo.out");
+    char cache[100];
+    int i, x;
+    int y = 0;
+    int cowx, cowy, farmx, farmy, cpoint, jpoint;
 
-    for (int i = 0; i <= 11; ++i)
+    cowx = cowy = farmx = farmy = -1;
+
+    string in;
+    int k = 0;
+    while (getline(fin, in))
     {
-        m[i][0] = '*';
-        m[i][11] = '*';
-        m[0][i] = '*';
-        m[11][i] = '*';
+        for (char s : in)
+        {
+            cache[k] = s;
+            k++;
+        }
+
+        for (x = 0; x < 10; x++)
+        {
+            grid[y][x] = cache[x];
+            if (cache[x] == 'C')
+            {
+                cowx = x;
+                cowy = y;
+                grid[y][x] = '.';
+            }
+            if (cache[x] == 'F')
+            {
+                farmx = x;
+                farmy = y;
+                grid[y][x] = '.';
+            }
+        }
+        y++;
     }
 
-    for (int row = 1; row <= 10; ++row)
-    {
-        for (int col = 1; col <= 10; ++col)
-        {
-        }
+    cpoint = jpoint = 0;
 
-        fin.get();
+    for (i = 0; i < 160000 && (cowx != farmx || cowy != farmy); i++)
+    {
+        move(&cowx, &cowy, &cpoint);
+        move(&farmx, &farmy, &jpoint);
     }
 
-    int step = 0;
-    bool ok = false;
-    while (true)
-    {
-        if ()
-        else
-        {
-            cow.row += directions[cow_direction].row;
-            cow.col += directions[cow_direction].col;
-        }
-        int state = makeState();
-        if (history.find(state) == history.end())
-        {
-            history.insert(state);
-        }
-        else
-        {
-            ok = false;
-            break;
-        }
-        if (farm.row == cow.row && farm.col == cow.col)
-        {
-            ok = true;
-            break;
-        }
-    }
-
-    if (!ok)
-    {
+    if (cowx == farmx && cowy == farmy) {
+        fout << i << endl;
+    } 
+    else {
         fout << 0 << endl;
-    }
-    else
-    {
-        fout << step << endl;
-    }
-
-    return 0;
+    }   
 }
