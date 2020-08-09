@@ -13,77 +13,121 @@ using namespace std;
 ifstream fin("ttwo.in");
 ofstream fout("ttwo.out");
 
-char grid[10][10];
-
-int deltax[] = {0, 1, 0, -1};
-int deltay[] = {-1, 0, 1, 0};
-
-void move(int *x, int *y, int *dir)
-{
-    int nx, ny;
-
-    nx = *x + deltax[*dir];
-    ny = *y + deltay[*dir];
-
-    if (nx < 0 || nx >= 10 || ny < 0 || ny >= 10 || grid[ny][nx] == '*')
-        *dir = (*dir + 1) % 4;
-    else
-    {
-        *x = nx;
-        *y = ny;
-    }
-}
+char field[10][10];
+int cowx, cowy, farmx, farmy, cdir, fdir;
 
 int main()
 {
-    char cache[100];
     int i, x;
-    int y = 0;
-    int cowx, cowy, farmx, farmy, cpoint, jpoint;
 
     cowx = cowy = farmx = farmy = -1;
 
     string in;
-    int k = 0;
+    int y = 0;
     while (getline(fin, in))
     {
+        char sline[10];
+        int k = 0;
         for (char s : in)
         {
-            cache[k] = s;
+            sline[k] = s;
             k++;
         }
 
         for (x = 0; x < 10; x++)
         {
-            grid[y][x] = cache[x];
-            if (cache[x] == 'C')
-            {
-                cowx = x;
-                cowy = y;
-                grid[y][x] = '.';
-            }
-            if (cache[x] == 'F')
+            field[y][x] = sline[x];
+            if (sline[x] == 'F')
             {
                 farmx = x;
                 farmy = y;
-                grid[y][x] = '.';
+                field[y][x] = '.';
+            }
+            else if (sline[x] == 'C')
+            {
+                cowx = x;
+                cowy = y;
+                field[y][x] = '.';
             }
         }
         y++;
     }
 
-    cpoint = jpoint = 0;
+    cdir = fdir = 0;
 
-    for (i = 0; i < 160000 && (cowx != farmx || cowy != farmy); i++)
+    for (i = 0; i < 160000 && !(cowy == farmy && cowx == farmx); i++)
     {
-        move(&cowx, &cowy, &cpoint);
-        move(&farmx, &farmy, &jpoint);
+        int offsetx = 0;
+        int offsety = 0;
+
+        if (cdir == 0)
+        {
+            offsety = -1;
+        }
+        else if (cdir == 1)
+        {
+            offsetx = 1;
+        }
+        else if (cdir == 2)
+        {
+            offsety = 1;
+        }
+        else if (cdir == 3)
+        {
+            offsetx = -1;
+        }
+        offsetx += cowx;
+        offsety += cowy;
+
+        if (offsetx < 0 || offsetx >= 10 || offsety < 0 || offsety >= 10 || field[offsety][offsetx] == '*')
+        {
+            cdir = (cdir + 1) % 4;
+        }
+        else
+        {
+            cowx = offsetx;
+            cowy = offsety;
+        }
+
+        offsetx = 0;
+        offsety = 0;
+
+        if (fdir == 0)
+        {
+            offsety = -1;
+        }
+        else if (fdir == 1)
+        {
+            offsetx = 1;
+        }
+        else if (fdir == 2)
+        {
+            offsety = 1;
+        }
+        else if (fdir == 3)
+        {
+            offsetx = -1;
+        }
+        offsetx += farmx;
+        offsety += farmy;
+
+        if (offsetx < 0 || offsetx >= 10 || offsety < 0 || offsety >= 10 || field[offsety][offsetx] == '*')
+        {
+            fdir = (fdir + 1) % 4;
+        }
+        else
+        {
+            farmx = offsetx;
+            farmy = offsety;
+        }
     }
 
-    if (cowx == farmx && cowy == farmy) {
+    if (i < 160000)
+    {
         fout << i << endl;
-    } 
-    else {
+    }
+    else
+    {
         fout << 0 << endl;
-    }   
+    }
 }
