@@ -1,92 +1,106 @@
-struct Point
+/*
+ID: stevenh6
+TASK: cowtour
+LANG: C++
+*/
+
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <iomanip>
+
+using namespace std;
+
+ofstream fout("cowtour.out");
+ifstream fin("cowtour.in");
+
+int xcords[160], ycords[160];
+
+double pythag(int a, int b)
 {
-    int x, y;
-};
-
-
-int n;
-double dist[160][160];
-double diam[160];
-double fielddiam[160];
-Point pt[160];
-int field[160];
-int nfield;
-
-double
-ptdist(Point a, Point b)
-{
-    return sqrt((double)(b.x - a.x) * (b.x - a.x) + (double)(b.y - a.y) * (b.y - a.y));
-}
-
-void mark(int i, int m)
-{
-    int j;
-    if (field[i] != -1)
-    {
-        return;
-    }
-
-    field[i] = m;
-    for (j = 0; j < n; j++)
-        if (dist[i][j] < INF / 2)
-            mark(j, m);
+    return sqrt((xcords[a] - xcords[b]) * (xcords[a] - xcords[b]) + (ycords[a] - ycords[b]) * (ycords[a] - ycords[b]));
 }
 
 int main()
 {
-    int i, j, k, c;
-    double newdiam, d;
+    int N;
+    double shortest = 9007199254740991;
+    double relate[160][160];
+    double distances[160];
 
+    fout.setf(ios::fixed);
 
-    for (i = 0; i < n; i++)
+    fin >> N;
+
+    for (int i = 0; i < N; i++)
     {
-        for (j = 0; j < n; j++)
+        fin >> xcords[i] >> ycords[i];
+        distances[i] = 0;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        fin.ignore();
+
+        for (int j = 0; j < N; j++)
         {
-            c = getc(fin);
+            char in = fin.get();
+
             if (i == j)
-                dist[i][j] = 0;
-            else if (c == '0')
-                dist[i][j] = INF; /* a lot */
+            {
+                relate[i][j] = 0;
+            }
+            else if (in != '1')
+            {
+                relate[i][j] = 9007199254740991;
+            }
             else
-                dist[i][j] = ptdist(pt[i], pt[j]);
+            {
+                relate[i][j] = pythag(i, j);
+            }
         }
     }
 
-    for (k = 0; k < n; k++)
-        for (i = 0; i < n; i++)
-            for (j = 0; j < n; j++)
-                if (dist[i][k] + dist[k][j] < dist[i][j])
-                    dist[i][j] = dist[i][k] + dist[k][j];
-
-    for (i = 0; i < n; i++)
-        field[i] = -1;
-    for (i = 0; i < n; i++)
-        if (field[i] == -1)
-            mark(i, nfield++);
-
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < N; i++)
     {
-        for (j = 0; j < n; j++)
-            if (diam[i] < dist[i][j] && dist[i][j] < INF / 2)
-                diam[i] = dist[i][j];
-        if (diam[i] > fielddiam[field[i]])
-            fielddiam[field[i]] = diam[i];
+        for (int j = 0; j < N; j++)
+        {
+            for (int k = 0; k < N; k++)
+            {
+                relate[j][k] = min(relate[j][k], relate[j][i] + relate[k][i]);
+            }
+        }
     }
 
-    newdiam = INF;
-    for (i = 0; i < n; i++)
-        for (j = 0; j < n; j++)
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
         {
-            if (field[i] == field[j])
-                continue;
-
-            d = diam[i] + diam[j] + ptdist(pt[i], pt[j]);
-            if (d < fielddiam[field[i]])
-                d = fielddiam[field[i]];
-            if (d < fielddiam[field[j]])
-                d = fielddiam[field[j]];
-
-            if (d < newdiam)
-                newdiam = d;
+            if (relate[i][j] != 9007199254740991)
+            {
+                distances[i] = max(relate[i][j], distances[i]);
+            }
         }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < N; j++)
+        {
+            if (relate[i][j] == 9007199254740991)
+            {
+                shortest = min(shortest, pythag(i, j) + distances[i] + distances[j]);
+            }
+        }
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        shortest = max(distances[i], shortest);
+    }
+
+    fout << setprecision(6);
+    fout << shortest << endl;
 }
