@@ -16,45 +16,39 @@ using namespace std;
 ofstream fout("agrinet.out");
 ifstream fin("agrinet.in");
 
-int ccount = 0;
-
 int main()
 {
-    int i, j, nfarm, nnode, mindist, minnode, total;
+    int sol = 0;
+    int connect[100] = {1};
+    int web[100][100];
 
-    fin >> nfarm;
-    for (i = 0; i < nfarm; i++)
-    {
-        for (j = 0; j < nfarm; j++)
-        {
-            fin >> dist[i][j];
+    int n;
+    fin >> n;
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            fin >> web[i][j];
         }
     }
-
-    total = 0;
-    cache[0] = 1;
-    nnode = 1;
-    for (cache[0] = 1, nnode = 1; nnode < nfarm; nnode++)
+    
+    for (int i = 1; i < n; i++)// n - i, i-j, j, k
     {
-        mindist = 0;
-        for (i = 0; i < nfarm; i++)
-        {
-            for (j = 0; j < nfarm; j++)
+        int indiv = 0;
+        int shortest;
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++)
             {
-                if (dist[i][j] && cache[i] && !cache[j])
+                if ((indiv == 0 || web[j][k] < indiv) && web[j][k] && connect[j] && !connect[k])
                 {
-                    if (mindist == 0 || dist[i][j] < mindist)
-                    {
-                        mindist = dist[i][j];
-                        minnode = j;
-                    }
+                    indiv = web[j][k];
+                    shortest = k;
                 }
             }
         }
-
-        cache[minnode] = 1;
-        total += mindist;
+            
+        sol += indiv;
+        connect[shortest] = 1;
     }
 
-    fout << total << endl;
+    fout << sol << endl;
 }
