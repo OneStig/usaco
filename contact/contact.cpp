@@ -8,76 +8,125 @@ LANG: C++
 #include <string>
 #include <vector>
 #include <algorithm>
-using namespace std;
+#include <map>
 
-const int BN = 13;
-int t[9005];
+using namespace std;
 
 ofstream fout("contact.out");
 ifstream fin("contact.in");
 
+struct sequence
+{
+    int64_t num;
+    string sstr;
+};
+
+bool seqsort(sequence i, const sequence j)
+{
+    if (i.sstr.length() != j.sstr.length())
+    {
+        return i.sstr.length() < j.sstr.length();
+    }
+
+    return i.num < j.num;
+}
+
 int main()
 {
     int a, b, n;
-    string sequence = "";
-    string in;
     fin >> a >> b >> n;
-    getline(fin, in);
 
-    while (getline(fin, in))
+    string str;
+    map<string, int> counter;
+    map<int, vector<sequence>> result;
+
+    while (fin.good())
     {
-        sequence += in;
+        string in;
+        getline(fin, in);
+        str += in;
     }
 
-    for (int i = 0; i != sequence.size(); i++)
+    for (int i = 0; i <= str.length() - a; ++i)
     {
-        for (int j = a; j <= b; j++)
+        for (int len = a; len <= b; ++len)
         {
-            if (i + j - 1 < sequence.size())
+            string shrunk = str.substr(i, len);
+            if (shrunk.length() == len)
             {
-                t[cache.to_ulong()]++;
+                if (counter.find(shrunk) == counter.end())
+                {
+                    counter[shrunk] = 0;
+                }
+                counter[shrunk]++;
             }
         }
     }
 
-    for (int i = 0; i != 9000; i++)
+    for (pair<string, int> p : counter)
     {
-        if (t[i])
+        if (result.find(p.second) == result.end())
         {
+            vector<sequence> r;
+            result[p.second] = r;
         }
+
+        int64_t num = 0;
+
+        for (char c : p.first)
+        {
+            if (c == '1')
+            {
+                num = (num << 1) + 1;
+            }
+            else
+            {
+                num = num << 1;
+            }
+        }
+
+        result[p.second].push_back(sequence({num, p.first}));
     }
 
-    int p = 0, last = -1;
+    int final = 0;
 
-    while (n--)
+    for (auto i = result.rbegin(); i != result.rend(); i++)
     {
+        auto point = *i;
+        fout << point.first << endl;
+        sort(point.second.begin(), point.second.end(), seqsort);
 
-        if (vbits[p].t != last)
+        bool first = true;
+        int count = 0;
+
+        for (auto k : point.second)
         {
-            fout << vbits[p].t << endl
-            fout << vbits[p].str;
-            last = vbits[p].t;
-            n++;
-        }
-        else
-        {
-            int count = 0;
-            while (vbits[++p].t == last)
+            if (first == false)
             {
-                count++
-                if (((count) % 6) == 0)
-                {
-                    fout << endl;
-                }
-
-                else
-                {
-                    fout << " ";
-                }
-
-                fout << vbits[p].str;
+                fout << " ";
             }
+
+            first = false;
+
+            fout << k.sstr;
+
+            count++;
+            if (count % 6 == 0)
+            {
+                fout << endl;
+                first = true;
+            }
+        }
+        if (count % 6 != 0)
+        {
             fout << endl;
+        }
+
+        final++;
+
+        if (n <= final)
+        {
+            break;
         }
     }
 }
