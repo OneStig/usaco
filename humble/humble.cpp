@@ -6,6 +6,7 @@ LANG: C++
 
 #include <fstream>
 #include <string>
+#include <climits>
 
 using namespace std;
 
@@ -39,7 +40,7 @@ int main()
 
     while (nhum < n + 1)
     {
-        min = 0x7FFFFFFF;
+        min = INT_MAX;
         minp = -1;
         for (i = 0; i < nprime; i++)
         {
