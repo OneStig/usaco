@@ -36,6 +36,7 @@ int main()
 
     for (int i = 0; i <= big * number + 3; ++i)
     {
+		cache[j + value[i]] = 1 + cache[j];
     }
 
     cache[0] = 0;
