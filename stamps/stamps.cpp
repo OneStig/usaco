@@ -1,13 +1,11 @@
 /*
 ID: stevenh6
-TASK: agrinet
+TASK: stamps
 LANG: C++
 */
 
 #include <fstream>
 #include <string>
-#include <map>
-#include <vector>
 #include <algorithm>
 
 using namespace std;
@@ -15,52 +13,35 @@ using namespace std;
 ofstream fout("stamps.out");
 ifstream fin("stamps.in");
 
+int combos[2000001];
+int values[201];
+
+
 int main()
 {
-    int stamps;
-    int lst[200];
-    int number;
-    int big = -1;
+    int N, K, i;
+    fin >> K >> N;
 
-    fin >> number >> stamps;
-    
-    for (int i = 0; i < stamps; ++i)
+    const int m = K * 10000;
+
+    for (i = 0; i < N; i++) {
+        fin >> values[i];
+    }
+        
+    for (i = 1; i <= m; i++)
     {
-        fin >> lst[i];
-        if (big < lst[i])
-        {
-            big = lst[i];
+        combos[i] = m;
+        for (int j = 0; j != N; j++) {
+            if (values[j] <= i && combos[i] > combos[i - values[j]] + 1) {
+                combos[i] = combos[i - values[j]] + 1;
+            }        
+        }
+            
+        if (combos[i] > K) {
+            i--;
+            break;
         }
     }
-    fin.close();
-
-    for (int i = 0; i <= big * number + 3; ++i)
-    {
-		cache[j + value[i]] = 1 + cache[j];
-    }
-
-    cache[0] = 0;
-    for (int i = 0; i < stamps; ++i)
-    {
-        for (int j = 0; j <= big * number; ++j)
-        {
-            if (cache[j] < number)
-            {
-                if (cache[j + lst[i]] > 1 + cache[j])
-                {
-                    cache[j + lst[i]] = 1 + cache[j];
-                }
-            }
-        }
-    }
-
-    int str = 0;
-    while (cache[str + 1] <= number)
-    {
-        str++;
-    }
-
-    fout << str << endl;
-
-    return (0);
+    fout << i << endl;
+    return 0;
 }
