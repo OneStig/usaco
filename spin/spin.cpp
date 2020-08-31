@@ -10,13 +10,11 @@ LANG: C++
 
 using namespace std;
 
-ifstream fin;
-ofstream fout;
+ofstream fout("spin.out");
+ifstream fin("spin.in");
 
 int main()
 {
-    fin.open("spin.in");
-    fout.open("spin.out");
 
     for (int i = 0; i < 5; ++i)
     {
