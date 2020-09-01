@@ -1,14 +1,13 @@
 /*
 ID: stevenh6
-TASK: ratios
+TAScount: ratios
 LANG: C++
 */
 
 #include <fstream>
 #include <string>
-#include <map>
 #include <vector>
-#include <string>
+#include <cmath>
 #include <algorithm>
 
 using namespace std;
@@ -18,53 +17,64 @@ ifstream fin("ratios.in");
 
 int main()
 {
-    int goal[3];
-    int read[3][3];
-    int sol[3];
+    int input[4][3];
 
-    fin >> goal[0] >> goal[1] >> goal[2];
-    for (int i = 0; i < 3; i++)
+    fin >> input[0][0] >> input[0][1] >> input[0][2];
+    fin >> input[1][0] >> input[1][1] >> input[1][2];
+    fin >> input[2][0] >> input[2][1] >> input[2][2];
+    fin >> input[3][0] >> input[3][1] >> input[3][2];
+
+    int determ = input[1][0] * input[2][1] * input[3][2]
+               + input[2][0] * input[3][1] * input[1][2]
+               + input[3][0] * input[1][1] * input[2][2]
+               - (input[3][0] * input[2][1] * input[1][2]
+               + input[1][0] * input[3][1] * input[2][2]
+               + input[1][1] * input[2][0] * input[3][2]);
+
+    int matrix[] = {
+        input[2][1] * input[3][2] - input[3][1] * input[2][2],
+        input[3][0] * input[2][2] - input[2][0] * input[3][2],
+        input[2][0] * input[3][1] - input[3][0] * input[2][1],
+        input[3][1] * input[1][2] - input[1][1] * input[3][2],
+        input[1][0] * input[3][2] - input[3][0] * input[1][2],
+        input[3][0] * input[1][1] - input[1][0] * input[3][1],
+        input[1][1] * input[2][2] - input[2][1] * input[1][2],
+        input[2][0] * input[1][2] - input[1][0] * input[2][2],
+        input[1][0] * input[2][1] - input[2][0] * input[1][1]
+    };
+
+    double a = double(input[0][0] * matrix[0] + input[0][1] * matrix[1] + input[0][2] * matrix[2]) / determ;
+    double b = double(input[0][0] * matrix[3] + input[0][1] * matrix[4] + input[0][2] * matrix[5]) / determ;
+    double c = double(input[0][0] * matrix[6] + input[0][1] * matrix[7] + input[0][2] * matrix[8]) / determ;
+
+
+    if (determ == 0)
     {
-        fin >> read[i];
+        fout << "NONE" << endl;
+        return 0;
     }
 
-    gsum = goal[0] + goal[1] + goal[2];
-
-    if (gsum == 0)
+    
+    if (a < 0 || b < 0 || c < 0)
     {
-        fout << "0 0 0 0" << endl;
+        fout << "NONE" << endl;
+        return 0;
     }
 
-    for (int i = 0; i < 100; i++) {
-        for (int j = 0; j < 100; j++)
+    int count = 1;
+    while (1)
+    {
+        if (a * count == floor(a * count) && b * count == floor(b * count) && c * count == floor(c * count))
         {
-            sol[0] = i * read[0][0] + j * read[1][0];
-            sol[1] = i * read[0][1] + j * read[1][1];
-            sol[2] = i * read[0][2] + j * read[1][2];
-
-            if (i + j <= min)
-            {
-                for (int k = 0; k < 100; k++)
-                {
-                    s = i + j + k;
-                    t = (sol[0] + sol[1] + sol[2]) / gsum;
-                    if (t != 0 && sol[0] == t * goal[0] &&
-                        sol[1] == t * goal[1] && sol[2] == t * goal[2])
-                    {
-                        mloc[0] = i;
-                    }
-                    sol[0] += read[2][0];
-                    sol[1] += read[2][1];
-                    sol[2] += read[2][2];
-                }
-            }
+            break;
+        }
+        else
+        {
+            count++;
         }
     }
-        
-    if (min == 301) {
-        fout << "NONE" << endl;
-    }
-    else {
-        
-    }
+
+    fout << int(a * count) << " " << int(b * count) << " " << int(c * count) << " " << count << endl;
+
+    return 0;
 }
