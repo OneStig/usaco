@@ -13,44 +13,61 @@ using namespace std;
 ofstream fout("spin.out");
 ifstream fin("spin.in");
 
+struct wheel
+{
+    int rspeed;
+    int wedges;
+    int angle[5];
+    int extent[5];
+};
+
 int main()
 {
 
-    for (int i = 0; i < 5; ++i)
+    int tot = 0;
+    int fill[360];
+    wheel inputs[5];
+
+    for (int i = 0; i < 5; i++)
     {
-        fin >> read[i].v;
-        fin >> read[i].w;
-        for (int j = 0; j < read[i].w; ++j)
+        int n;
+        fin >> inputs[i].rspeed >> n;
+
+        inputs[i].wedges = n;
+
+        for (int j = 0; j < n; j++)
         {
-            fin >> read[i].start_angle[j];
-            fin >> read[i].width[j];
+            fin >> inputs[i].angle[j] >> inputs[i].extent[j];
         }
     }
 
-    int t = 0;
-    int fill[360];
-
-    for (int p = 0; p < 360; p++)
+    for (int i = 0; i < 360; i++)
     {
-        for (int i = 0; i < 5; i++)
-        {
-            int offset = t * read[i].v;
-            for (int j = 0; j < read[i].w; ++j)
-            {
+        for (int j = 0; j < 360; j++) {
+            fill[j] = 0;
+        }
 
-                for (; k++)
+        for (int j = 0; j < 5; j++)
+        {
+            wheel cur = inputs[j];
+            int offset = i * cur.rspeed;
+
+            for (int k = 0; k < cur.wedges; k++)
+            {
+                int kang = cur.angle[k];
+                for (int l = 0; l <= cur.extent[k]; l++)
                 {
-                    if (fill[k % 360]++ == 5)
+                    fill[(l + offset + kang) % 360]++;
+
+                    if (fill[(l + offset + kang) % 360] == 5)
                     {
-                        fout << t << endl;
+                        fout << i << endl;
                         return 0;
                     }
                 }
             }
         }
-        t++;
     }
 
     fout << "none" << endl;
-    return 0;
 }
