@@ -35,20 +35,12 @@ void visit(int a) {
 	visited[a] = 1;
 }
 
-int traverse(int a, int b) {
+void traverse(int a, int b) {
 	if (a == b) {
-		pastures[a][b] = 0;
-		return 0;
-	} 
+        pastures[a][b] == 0;
+        return;
+    }
 
-	if (pastures[a][b] != -1) {
-		return pastures[a][b];
-	}
-	if (pastures[b][a] != -1) {
-		return pastures[b][a];
-	}
-
-	
 	int head = a;
 
 	for (int i = 1; i <= P; i++) {
@@ -77,19 +69,17 @@ int traverse(int a, int b) {
 	}
 
 	for (int i = 1; i <= P; i++) {
-		if (distances[i] != -1 || distances[i] < pastures[a][i]) {
-			pastures[a][i] = distances[i];
-			pastures[i][a] = distances[i];
-		}
+        if (pastures[a][i] == -1 || distances[i] < pastures[a][i]) {
+            pastures[a][i] = distances[i];
+		    pastures[i][a] = distances[i];
+        }
 	}
-
-	return pastures[a][b];
 }
 
 int main()
 {
 	fin >> N >> P >> C;
-	
+
 	for (int i = 1; i <= P; i++)
 	{
 		for (int j = 1; j <= P; j++)
@@ -111,25 +101,23 @@ int main()
 
 		pastures[a][b] = c;
 		pastures[b][a] = c;
-		neighbors[a][b] = c;
+        neighbors[a][b] = c;
 		neighbors[b][a] = c;
-	}
+    }
 
-	int sol = INT_MAX;
+    for (int i = 1; i <= P; i++) {
+        for (int j = 1; j <= i; j++) {
+            if (pastures[i][j] == -1 && pastures[j][i] == -1) {
+                traverse(i, j);
+                //cout << i << " " << j << endl;
+            }
+        }
+    }
 
-	for (int i = 1; i <= P; i++)
-	{
-		int sum = 0;
-
-		for (int j = 1; j <= N; j++)
-		{
-			sum += traverse(cows[j], i);
-		}
-
-		//cout << sum << endl;
-
-		sol = min(sol, sum);
-	}
-
-	fout << sol << endl;
+    for (int i = 1; i <= P; i++) {
+        for (int j = 1; j <= P; j++) {
+            fout << pastures[i][j] << "   ";
+        }
+        cout << endl;
+    }
 }
