@@ -1,0 +1,20 @@
+/*
+ID: stevenh6
+TASK: butter
+LANG: C++
+*/
+
+#include <fstream>
+#include <string>
+
+using namespace std;
+
+ofstream fout("butter.out");
+ifstream fin("butter.in");
+
+int N, P, C;
+
+int main()
+{
+	sdf
+}
