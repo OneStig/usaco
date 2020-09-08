@@ -17,77 +17,96 @@ using namespace std;
 ofstream fout("msquare.out");
 ifstream fin("msquare.in");
 
-string full = "";
-set<string> ss;
-queue<Node> Q;
-
-struct Node
+struct Magic
 {
-    Node(string _st, string _str, int _d)
+    string tran, str;
+    int sh;
+    Magic(string tr, string st, int s)
     {
-        st = _st;
-        str = _str;
-        d = _d;
+        tran = tr;
+        str = st;
+        sh = s;
     }
-    string st, str;
-    int d;
 };
 
-Node DFS()
-{
-    if (full == "12345678") {
-        return Node("", "", 0);
-    }
-        
-    Q.push(Node("12345678", "", 0));
-    ss.insert("12345678");
+string full = "";
+set<string> all;
+queue<Magic> Q;
+const string tot = "12345678";
 
-    while (!Q.empty())
+Magic search()
+{
+    if (full == tot)
     {
-        Node cur = Q.front();
+        return Magic("", "", 0);
+    }
+
+    Q.push(Magic("12345678", "", 0));
+    all.insert("12345678");
+
+    while (true)
+    {
+        if (Q.empty())
+        {
+            break;
+        }
+
+        Magic cur = Q.front();
+        
+        string A(cur.tran.rbegin(), cur.tran.rend());
+        string B(cur.tran[3] + cur.tran.substr(0, 3) + cur.tran.substr(5) + cur.tran[4]);
+        string C = cur.tran;
+        
         Q.pop();
-        string C = cur.st;
-        string A(C.rbegin(), C.rend());
+
         if (A == full)
-            return Node(A, cur.str + "A", cur.d + 1);
-        if (!ss.count(A))
         {
-            ss.insert(A);
-            Q.push(Node(A, cur.str + "A", cur.d + 1));
+            return Magic(A, cur.str + "A", cur.sh + 1);
         }
-        string B(C[3] + C.substr(0, 3) + C.substr(5) + C[4]);
-        if (B == full) {
-            return Node(B, cur.str + "B", cur.d + 1);
-        }
-            
-        if (!ss.count(B))
+
+        if (!all.count(A))
         {
-            ss.insert(B);
-            Q.push(Node(B, cur.str + "B", cur.d + 1));
+            all.insert(A);
+            Q.push(Magic(A, cur.str + "A", cur.sh + 1));
         }
+        
+
+        if (B == full)
+        {
+            return Magic(B, cur.str + "B", cur.sh + 1);
+        }
+
+        if (!all.count(B))
+        {
+            all.insert(B);
+            Q.push(Magic(B, cur.str + "B", cur.sh + 1));
+        }
+
         swap(C[1], C[2]);
         swap(C[1], C[5]);
         swap(C[1], C[6]);
-        if (C == full) {
-            return Node(C, cur.str + "C", cur.d + 1);
-        }
-            
-        if (!ss.count(C))
+
+        if (C == full)
         {
-            ss.insert(C);
-            Q.push(Node(C, cur.str + "C", cur.d + 1));
+            return Magic(C, cur.str + "C", cur.sh + 1);
+        }
+
+        if (!all.count(C))
+        {
+            all.insert(C);
+            Q.push(Magic(C, cur.str + "C", cur.sh + 1));
         }
     }
 }
 int main()
 {
-    char in;
-    for (int i = 0; i != 8; i++)
+    for (int i = 0; i < 8; i++)
     {
+        char in;
         fin >> in;
         full += in;
     }
-    Node n = DFS();
-    fout << n.d << endl << n.str << endl;
-    return 0;
+    
+    Magic n = search();
+    fout << n.sh << endl << n.str << endl;
 }
