@@ -15,69 +15,78 @@ using namespace std;
 ofstream fout("ratios.out");
 ifstream fin("ratios.in");
 
+int read[3];
+int matr[3][3];
+int mloc[4];
+int sums[3];
+int minm;
+
 int main()
 {
-    int inp[4][3];
+    int s;
+    int rtot;
+    minm = 301;
 
-    int a1, b1, c1, d1;
-    int a2, b2, c2, d2;
-    int a3, b3, c3, d3;
+    fin >> read[0] >> read[1] >> read[2];
+    rtot = read[0] + read[1] + read[2];
+    
+    for (int i = 0; i < 3; i++) {
+        fin >> matr[i][0] >> matr[i][1] >> matr[i][2];
+    }  
 
-    fin >> inp[3][0] >> inp[3][1] >> inp[3][2];
+    
 
-    for (int i = 0; i < 3; i++)
+    if (rtot == 0)
     {
-        for (int j = 0; j < 3; j++)
-        {
-            fin >> inp[i][j];
-        }
-    }
-
-    // fin >> d1 >> d2 >> d3;
-    // fin >> a1 >> a2 >> a3;
-    // fin >> b1 >> b2 >> b3;
-    // fin >> c1 >> c2 >> c3;
-
-    int determ = a1 * b2 * c3 + b1 * c2 * a3 + c1 * a2 * b3 - (c1 * b2 * a3 + a1 * c2 * b3 + a2 * b1 * c3);
-
-    if (determ == 0)
-    {
-        fout << "NONE" << endl;
+        fout << "0 0 0 0" << endl;
         return 0;
     }
 
-    int a = b2 * c3 - c2 * b3;
-    int b = c1 * b3 - b1 * c3;
-    int c = b1 * c2 - c1 * b2;
-    int d = c2 * a3 - a2 * c3;
-    int e = a1 * c3 - c1 * a3;
-    int f = c1 * a2 - a1 * c2;
-    int g = a2 * b3 - b2 * a3;
-    int h = b1 * a3 - a1 * b3;
-    int i = a1 * b2 - b1 * a2;
-
-    double x = double(d1 * a + d2 * b + d3 * c) / determ;
-    double y = double(d1 * d + d2 * e + d3 * f) / determ;
-    double z = double(d1 * g + d2 * h + d3 * i) / determ;
-
-    if (x < 0 || y < 0 || z < 0)
+    for (int i = 0; i < 100; i++)
     {
+        for (int j = 0; j < 100; j++)
+        {
+
+            sums[0] = i * matr[0][0] + j * matr[1][0];
+            sums[1] = i * matr[0][1] + j * matr[1][1];
+            sums[2] = i * matr[0][2] + j * matr[1][2];
+
+            if (i + j > minm) {
+                break;
+            }
+
+            for (int k = 0; k < 100; k++)
+            {
+                if (i + j + k >= minm) {
+                    break;
+                }
+                    
+                int t = (sums[0] + sums[1] + sums[2]) / rtot;
+
+                if (t != 0 && sums[0] == t * read[0] &&
+                    sums[1] == t * read[1] && sums[2] == t * read[2])
+                {
+                    minm = s;
+
+                    mloc[0] = i;
+                    mloc[1] = j;
+                    mloc[2] = k;
+                    mloc[3] = t;
+                }
+                sums[0] += matr[2][0];
+                sums[1] += matr[2][1];
+                sums[2] += matr[2][2];
+            }
+        }
+    }
+        
+    if (minm == 301) {
         fout << "NONE" << endl;
-        return 0;
     }
-
-    int k = 1;
-    while (true)
-    {
-        if (x * k == floor(x * k) && y * k == floor(y * k) && z * k == floor(z * k))
-        {
-            break;
-        }
-        else
-        {
-            k++;
-        }
+    else {
+        fout << mloc[0] << " " <<
+                mloc[1] << " " <<
+                mloc[2] << " " <<
+                mloc[3];
     }
-
-    fout << int(x * k) << " " << int(y * k) << " " << int(z * k) << " " << k << endl;
 }
