@@ -4,86 +4,70 @@ TASK: ratios
 LANG: C++
 */
 
-#include <fstream>
 #include <string>
-#include <vector>
+#include <fstream>
+#include <iostream>
 #include <cmath>
-#include <algorithm>
+#include <climits>
 
 using namespace std;
 
 ofstream fout("ratios.out");
 ifstream fin("ratios.in");
 
-int goal[3];
-int ratios[3][3];
-int solm[4];
-int matr[3];
-
 int main()
 {
-    int i, j, k, t, s;
-    int tot;
+    int a[5], b[5], c[5];
+    int bco, oco, wco, ans = INT_MAX;
+    int x, y, z;
+    fin >> x >> y >> z;
 
-    fin >> goal[0] >> goal[1] >> goal[2];
-
-    for (i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
-        fin >> ratios[i][0] >> ratios[i][1] >> ratios[i][2];
+        fin >> a[i] >> b[i] >> c[i];
     }
 
-    tot = goal[0] + goal[1] + goal[2];
-    int sol = 301;
-
-    if (tot == 0)
+    for (int i = 0; i < 100; ++i)
     {
-        fout << "0 0 0 0" << endl;
-        return 0;
-    }
-
-    for (i = 0; i < 100; i++)
-    {
-        for (j = 0; j < 100; j++)
+        for (int j = 0; j < 100; ++j)
         {
-            matr[0] = i * ratios[0][0] + j * ratios[1][0];
-            matr[1] = i * ratios[0][1] + j * ratios[1][1];
-            matr[2] = i * ratios[0][2] + j * ratios[1][2];
-
-            if (i + j > sol) {
-                break;
-            }
-
-            for (k = 0; k < 100; k++)
+            for (int k = 0; k < 100; ++k)
             {
-                if (i + j + k >= sol)
+                if (i + j + k == 0)
                 {
-                    break;
+                    continue;
                 }
-
-                t = (matr[0] + matr[1] + matr[2]) / tot;
-                if (t != 0 && matr[0] == t * goal[0] && matr[1] == t * goal[1] && matr[2] == t * goal[2])
+                int xx = i * a[0] + j * a[1] + k * a[2];
+                int yy = i * b[0] + j * b[1] + k * b[2];
+                int zz = i * c[0] + j * c[1] + k * c[2];
+                if ((x == 0 && xx != 0) || (y == 0 && yy != 0) || (z == 0 && zz != 0))
                 {
-                    sol = s;
-
-                    solm[0] = i;
-                    solm[1] = j;
-                    solm[2] = k;
-                    solm[3] = t;
+                    continue;
                 }
-
-                matr[0] += ratios[2][0];
-                matr[1] += ratios[2][1];
-                matr[2] += ratios[2][2];
+                if ((x == 0 || xx % x == 0) && (y == 0 || yy % y == 0) && (z == 0 || zz % z == 0))
+                {
+                    int tmp = x != 0 ? xx / x : (y != 0 ? yy / y : zz / z);
+                    if (tmp < ans && (x == 0 || xx / x == tmp) && (y == 0 || yy / y == tmp) && (z == 0 || zz / z == tmp))
+                    {
+                        ans = tmp;
+                        bco = i;
+                        oco = j;
+                        wco = k;
+                    }
+                }
             }
         }
     }
 
-    if (sol == 301)
+    if (ans == INT_MAX)
     {
         fout << "NONE" << endl;
+        return 0;
     }
-    else
-    {
-        fout << solm[0] << " " << solm[1] << " " << solm[2] << " " << solm[3] << endl;
-    }
+
+    fout << bco << " "
+             << oco << " "
+             << wco << " "
+             << ans << endl;
+    return 0;
 }
