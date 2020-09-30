@@ -4,139 +4,119 @@ TASK: shopping
 LANG: C++
 */
 
-#include <fstream>
-#include <string>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-ofstream fout("shopping.out");
-ifstream fin("shopping.in");
+using ll = long long;
+using ld = long double;
+using db = double;
 
-struct specof
+using pi = pair<int, int>;
+using pl = pair<ll, ll>;
+using pd = pair<db, db>;
+
+using vi = vector<int>;
+using vb = vector<bool>;
+using vl = vector<ll>;
+using vd = vector<db>;
+using vs = vector<string>;
+using vpi = vector<pi>;
+using vpl = vector<pl>;
+using vpd = vector<pd>;
+
+#define FFOR(i, a, c, b) for (int i = (a); c < (b); ++i)
+#define FOR(i, a, b) for (int i = (a); i < (b); ++i)
+#define FOR0(i, a) FOR(i, 0, a)
+#define RFOR(i, a, b) for (int i = (b)-1; i >= (a); --i)
+#define RFOR0(i, a) ROF(i, 0, a)
+
+ofstream fout;
+ifstream fin;
+
+void setIO(string t)
 {
-    int nitem;
-    int itemid[5];
-    int itemamt[5];
-    int cost;
+    fout.open(t + ".out");
+    fin.open(t + ".in");
+}
+
+// End of template
+
+struct Off
+{
+    int obj[6];
+    int p;
 };
 
-specof offers[105];
-int noffer;
+Off offer[200];
+int dp[6][6][6][6][6];
+int code[1001]
+int buy[6];
+int s, nobj, ncode, t, in, price;
 
-int hloc[7776];
-int cost[7776];
-int dijkh[7776];
-int itemid[5];
-int itemcst[5];
-int nitem;
-int hsize;
-
-
-void check_heap(void)
+int CODE(int n)
 {
-    int lv;
-    return;
-
-    for (lv = 1; lv < hsize; lv++)
-    {
-        if (cost[dijkh[lv]] < cost[dijkh[(lv - 1) / 2]])
-        {
-            fprintf(stderr, "HEAP ERROR!\n");
-            return;
-        }
-    }
+    if (!code[n])
+        code[n] = ++ncode;
+    return code[n];
 }
-
-void delete_min(void)
-{
-    int loc, val;
-    int p, t;
-
-    loc = dijkh[--hsize];
-    val = cost[loc];
-
-    p = 0;
-
-    while (2 * p + 1 < hsize)
-    {
-        t = 2 * p + 1;
-        if (t + 1 < hsize && cost[dijkh[t + 1]] < cost[dijkh[t]])
-            t++;
-
-        if (cost[dijkh[t]] < val)
-        {
-            dijkh[p] = dijkh[t];
-            hloc[dijkh[p]] = p;
-            p = t;
-        }
-        else
-            break;
-    }
-    dijkh[p] = loc;
-    hloc[loc] = p;
-}
-
-void update(int loc)
-{
-    int val;
-    int p, t;
-
-    val = cost[loc];
-    p = hloc[loc];
-
-    while (p > 0)
-    {
-        t = (p - 1) / 2;
-        if (cost[dijkh[t]] > val)
-        {
-            dijkh[p] = dijkh[t];
-            hloc[dijkh[p]] = p;
-            p = t;
-        }
-        else
-            break;
-    }
-
-    dijkh[p] = loc;
-    hloc[loc] = p;
-}
-
-void add_heap(int loc)
-{
-    if (hloc[loc] == -1)
-    {
-        dijkh[hsize++] = loc;
-        hloc[loc] = hsize - 1;
-    }
-
-    update(loc);
-}
-
 int main()
 {
-    int amt[5];
-    int a;
+    setIO("shopping");
 
-    fin >> noffer;
+    fin >> s;
 
-    for (int i = 0; i < noffer; i++) {
-        fin >> offers[i].nitem;
+    FOR0(i, s)
+    {
+        fin >> t;
+        for (int j = 0; j != t; j++)
+        {
+            fin >> in;
+            fin >> offer[i].obj[CODE(in)];
+        }
+        fin >> offer[i].p;
+    }
 
-        for (int j = 0; j < offers[i].nitem; j++) {
-            fin >> offers[i].itemid[j] >> offers[i].itemamt[j] >> offers[i].cost;
+    fin >> nobj;
+
+    FOR0(i, nobj)
+    {
+        fin >> in;
+        int cd = CODE(in);
+        fin >> buy[cd];
+        fin >> offer[s + i].p;
+        offer[s + i].obj[cd] = 1;
+    }
+
+    memset(dp, 127, sizeof(dp));
+    dp[0][0][0][0][0] = 0;
+
+    FOR0(i, nobj + s)
+    {
+        int n1 = offer[i].obj[1];
+        int n2 = offer[i].obj[2];
+        int n3 = offer[i].obj[3];
+        int n4 = offer[i].obj[4];
+        int n5 = offer[i].obj[5];
+
+        for (int a1 = 0; a1 + n1 <= buy[1]; a1++)
+        {
+            for (int a2 = 0; a2 + n2 <= buy[2]; a2++)
+            {
+                for (int a3 = 0; a3 + n3 <= buy[3]; a3++)
+                {
+                    for (int a4 = 0; a4 + n4 <= buy[4]; a4++)
+                    {
+                        for (int a5 = 0; a5 + n5 <= buy[5]; a5++)
+                        {
+                            dp[a1 + n1][a2 + n2][a3 + n3][a4 + n4][a5 + n5] = min(dp[a1][a2][a3][a4][a5] + offer[i].p, dp[a1 + n1][a2 + n2][a3 + n3][a4 + n4][a5 + n5]);
+                        }
+                    }
+                }
+            }
         }
     }
 
-    fin >> nitem;
-
-    for (int i = 0; i < nitem; i++) {
-        fin >> itemid[i] >> amt[i] >> cost[i];
-    }
-
-    for (int i = nitem; i < 5; i++) {
-        itemid[i] = -1;
-        amt[i] = 0;
-        cost[i] = 0;
-    }
+    fout << dp[buy[1]][buy[2]][buy[3]][buy[4]][buy[5]] << endl;
+    return 0;
 }
