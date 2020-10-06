@@ -1,6 +1,6 @@
 /*
 ID: stevenh6
-TASK: taskname
+TASK: heritage
 LANG: C++
 */
 
@@ -41,7 +41,29 @@ void setIO(string t)
 
 // End of template
 
+string sol;
+
+void rec(string a, string b) {
+    if (a.size() == 0) {
+        return;
+    }
+
+    int p = b.find(a[0]);
+
+    rec(a.substr(1, p), pre.substr(0, p));
+
+    rec(a.substr(1 + p), pre.substr(1 + p));
+
+    sol += a[0];
+}
+
 int main()
 {
-    setIO("taskname");
+    setIO("heritage");
+
+    string a, b;
+    fin >> b >> a;
+    rec(a, b);
+
+    cout << sol << endl;
 }
