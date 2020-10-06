@@ -50,9 +50,9 @@ void rec(string a, string b) {
 
     int p = b.find(a[0]);
 
-    rec(a.substr(1, p), pre.substr(0, p));
+    rec(a.substr(1, p), b.substr(0, p));
 
-    rec(a.substr(1 + p), pre.substr(1 + p));
+    rec(a.substr(1 + p), b.substr(1 + p));
 
     sol += a[0];
 }
@@ -65,5 +65,5 @@ int main()
     fin >> b >> a;
     rec(a, b);
 
-    cout << sol << endl;
+    fout << sol << endl;
 }
