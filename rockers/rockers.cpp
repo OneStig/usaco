@@ -48,31 +48,33 @@ int main()
 {
     setIO("rockers");
 
-    int n, t, m;
+    int N, M, T;
     int sol = 0;
-    fin >> n >> t >> m;
+    fin >> N >> M >> T;
+    // songs >> disks >> size
 
-    FOR0(i, n)
+    FOR0(i, N)
     {
-        fin >> le[i];
+        fin >> le[i + 1];
     }
 
-    FOR0(i, m)
+    memset(dp, 0, sizeof(dp));
+
+    FOR0(i, T)
     {
-        FOR0(j, t + 1)
+        FOR0(j, M + 1)
         {
-            FOR0(k, n + 1)
+            FOR0(k, N + 1)
             {
-                FOR(l, k + 1, n + 1)
+                FOR(l, k + 1, N + 1)
                 {
-                    if (j + le[l] <= t)
+                    if (j + le[l] <= M)
                     {
                         dp[i][j + le[l]][l] = max(dp[i][j][k] + 1, dp[i][j + le[l]][l]);
-
-                        continue;
                     }
-
-                    dp[i + 1][le[l]][l] = max(dp[i][j][k] + 1, dp[i + 1][le[l]][l]);
+                    else {
+                        dp[i + 1][le[l]][l] = max(dp[i][j][k] + 1, dp[i + 1][le[l]][l]);
+                    }
                 }
                 
                 sol = max(sol, dp[i][j][k]);
