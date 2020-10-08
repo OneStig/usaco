@@ -41,7 +41,7 @@ void setIO()
 // End of template
 
 int sizes[10];
-int valid[257];
+int valid[256];
 
 int gcd(int a, int b) {
     int tmp;
@@ -74,7 +74,7 @@ int main()
             return 0;
         }
 
-        valid[sizes[i]] = 1;
+        valid[sizes[i] % 256] = 1;
 
         if (i == 0) {
             gd = sizes[i];
@@ -89,31 +89,27 @@ int main()
         return 0;
     }
 
+    int sol = 0;
     int streak = 0;
-    int sol = 1;
 
-    FOR(i, 1, 2000000000) {
-        if (streak >= 256) {
+    FOR(i, 0, 2000000000) {
+
+        if (streak > 256) {
             break;
         }
         
-        bool bout = 0;
+        if (valid[i % 256]) {
+            valid[i % 256] = 0;
 
-        FOR(j, 1, 257) {
-            if (valid[j] && valid[i % 256 - j]) {
-                bout = 1;
-                valid[(i + j) % 256] = 1;
-                streak++;
-                break;
+            FOR0(j, N) {
+                valid[((i % 256) + sizes[j]) % 256] = 1;
             }
+            streak++;
         }
-
-        if (bout) {
-            continue;
+        else {
+            sol = i;
+            streak = 0;
         }
-
-        sol = i;
-        streak = 0;
     }
 
     cout << sol << endl;
