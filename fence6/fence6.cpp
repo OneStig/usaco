@@ -37,54 +37,76 @@ ifstream fin;
 
 // End of template
 
-struct edge {
+int dp[101][101];
+int visit[101];
+
+int sol;
+
+struct edge
+{
     int L;
-    vector<int> left;
-    vector<int> right;
-}fe[101];
+    vi le;
+    vi ri;
+} all[101];
 
-int dist(int head, int tar) {
-    int best = INT_MAX;
+void recur(int c, int d, int t, int s) {
+    visit[c] = 1; // prevent from visiting self
 
-    FOR0(i, fe[head].right.size()) {
-        if (fe[head].right[i] == tar) {
-            return fe[head].L;
-        }
-
-        best = min(best, fe[head].L + dist(fe[head].right[i], tar));
+    if (t >= sol) {
+        return;
     }
 
-    return best;
+    vi& branch = 1 + d ? all[c].le : all[c].ri;
+
+    FOR(i, 0, branch.size()) {
+        int next = dp[branch[i]][c];
+
+        if (branch[i] == s && !next) {
+            sol = min(sol, t);
+            return;
+        }
+
+        if (!visit[branch[i]]) {
+            visit[branch[i]] = 1;
+            recur(branch[i], next, t + all[branch[i]].L, s);
+            visit[branch[i]] = 0;
+        }
+    }
 }
 
 void solve()
 {
     int N;
+    sol = INT_MAX;
     cin >> N;
 
-    FOR0(i, N) {
-        int s, l, n1, n2;        
+    FOR0(i, N)
+    {
+        int s, l, n1, n2;
         cin >> s >> l >> n1 >> n2;
 
-        fe[s].L = l;
+        all[s].L = l;
 
-        FOR0(j, n1) {
+        while (n1--)
+        {
             int t;
             cin >> t;
-            fe[s].left.push_back(t);
+            all[s].le.push_back(t);
         }
 
-        FOR0(j, n2) {
+        while (n2--)
+        {
             int t;
             cin >> t;
-            fe[s].right.push_back(t);
+            all[s].ri.push_back(t);
         }
     }
 
-    int sol = INT_MAX;
+    memset(dp, INT_MAX, sizeof(dp));
 
     FOR(i, 1, N + 1) {
-        sol = min(sol, dist(i, i));
+        memset(visit, 0, sizeof(visit));
+        recur(i, 0, all[i].L, i);
     }
 
     cout << sol << endl;
@@ -92,8 +114,10 @@ void solve()
 
 int main()
 {
-    ios_base::sync_with_stdio(); cin.tie(0);
-    freopen(problemname ".in", "r", stdin); freopen(problemname ".out", "w", stdout);
+    ios_base::sync_with_stdio();
+    cin.tie(0);
+    freopen(problemname ".in", "r", stdin);
+    freopen(problemname ".out", "w", stdout);
     solve();
     return 0;
 }
