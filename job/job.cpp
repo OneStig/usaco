@@ -1,10 +1,10 @@
 /*
 ID: stevenh6
-TASK: taskname
+TASK: job
 LANG: C++
 */
 
-#define problemname "taskname"
+#define problemname "job"
 
 #include <bits/stdc++.h>
 
@@ -32,16 +32,36 @@ using vpd = vector<pd>;
 #define RFOR(i, a, b) for (int i = (b)-1; i >= (a); --i)
 #define RFOR0(i, a) ROF(i, 0, a)
 
-#define pb push_back;
-
 ofstream fout;
 ifstream fin;
 
 // End of template
 
+int a[30], b[30];
+
+int ae[20], be[20];
+
 void solve()
 {
-    
+    int n, m1, m2;
+    cin >> n >> m1 >> m2;
+
+    memset(ae, 0, sizeof(ae));
+    memset(be, 0, sizeof(be));
+
+    FOR(i, m1) {
+        cin >> a[i];
+        ae[a[i]] += 1;
+    }
+
+    FOR(i, m2) {
+        cin >> b[i];
+        be[b[i]] += 1;
+    }
+
+    int i = 0;
+    while (true) {}
+
 }
 
 int main()

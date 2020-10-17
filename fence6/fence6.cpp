@@ -56,7 +56,7 @@ void recur(int c, int d, int t, int s) {
         return;
     }
 
-    vi& branch = 1 + d ? all[c].le : all[c].ri;
+    vi& branch = 1 - d ? all[c].ri : all[c].le;
 
     FOR(i, 0, branch.size()) {
         int next = dp[branch[i]][c];
@@ -80,6 +80,8 @@ void solve()
     sol = INT_MAX;
     cin >> N;
 
+    memset(dp, 0, sizeof(dp));
+
     FOR0(i, N)
     {
         int s, l, n1, n2;
@@ -99,10 +101,10 @@ void solve()
             int t;
             cin >> t;
             all[s].ri.push_back(t);
+
+            dp[s][t] = 1;
         }
     }
-
-    memset(dp, INT_MAX, sizeof(dp));
 
     FOR(i, 1, N + 1) {
         memset(visit, 0, sizeof(visit));

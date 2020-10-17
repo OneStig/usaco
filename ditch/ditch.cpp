@@ -1,10 +1,10 @@
 /*
 ID: stevenh6
-TASK: taskname
+TASK: ditch
 LANG: C++
 */
 
-#define problemname "taskname"
+#define problemname "ditch"
 
 #include <bits/stdc++.h>
 
@@ -38,10 +38,31 @@ ofstream fout;
 ifstream fin;
 
 // End of template
+int ditch[200][200];
+vi conn[200];
 
 void solve()
 {
+    int n, m;
+    cin >> n >> m;
+
+    memset(con, 0, sizeof(con));
+
+    FOR(i, n) {
+        int s, e, c;
+        cin >> s >> e >> c;
+        con[s][e] += c;
+        con[s].pb(e);
+        con[e].pb(s);
+    }
+
+    int s = 0;
     
+    m--;
+
+    while (true) {
+
+    }
 }
 
 int main()
