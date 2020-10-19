@@ -38,31 +38,71 @@ ofstream fout;
 ifstream fin;
 
 // End of template
-int ditch[200][200];
-vi conn[200];
+
+ll ditch[200][200];
+vi con[200];
+
+ll fu;
+vi path;
 
 void solve()
 {
+    ll sol = 0;
     int n, m;
     cin >> n >> m;
 
-    memset(con, 0, sizeof(con));
+    memset(ditch, 0, sizeof(ditch));
 
     FOR(i, n) {
         int s, e, c;
         cin >> s >> e >> c;
-        con[s][e] += c;
+        ditch[s][e] += c;
         con[s].pb(e);
         con[e].pb(s);
     }
 
-    int s = 0;
-    
     m--;
 
-    while (true) {
+    for (int i = 0; true;) {
+        vi dist(200, INT_MAX);
+        dist[i] = 0;
 
+        queue<int> li;
+        li.push(i);
+        path.assign(200, -1);
+
+        fu = 0;
+
+        while(true) {
+            if (li.empty()) {
+                break;
+            }
+
+            int c = li.front();
+
+            if (i == c) {
+                break;
+            }
+
+            li.pop();
+
+            for (auto& j : con[c]) {
+                if (0 < ditch[c][j] && dist[j] == INT_MAX) {
+                    dist[j] = dist[c] + 1;
+                    li.push(j);
+                    path[j] = c;
+                }
+            }
+
+            if (!fu) {
+                break;
+            }
+
+            sol += fu;
+        }
     }
+
+    cout << sol << endl;
 }
 
 int main()
