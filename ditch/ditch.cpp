@@ -45,6 +45,19 @@ vi con[200];
 ll fu;
 vi path;
 
+void rev(int a, ll minm) {
+    if (a == 0) {
+        fu = minm;
+        return;
+    }
+
+    if (path[a] != -1) {
+        rev(path[a], min(minm, ditch[path[a]][a]));
+        ditch[path[a]][a] -= fu;
+        ditch[a][path[a]] += fu;
+    }
+}
+
 void solve()
 {
     ll sol = 0;
@@ -53,12 +66,12 @@ void solve()
 
     memset(ditch, 0, sizeof(ditch));
 
-    FOR(i, n) {
+    FOR0(i, n) {
         int s, e, c;
         cin >> s >> e >> c;
         ditch[s][e] += c;
-        con[s].pb(e);
-        con[e].pb(s);
+        con[s].push_back(e);
+        con[e].push_back(s);
     }
 
     m--;
@@ -80,19 +93,21 @@ void solve()
 
             int c = li.front();
 
-            if (i == c) {
+            if (m == c) {
                 break;
             }
 
             li.pop();
 
             for (auto& j : con[c]) {
-                if (0 < ditch[c][j] && dist[j] == INT_MAX) {
+                if (0 < ditch[c][j] && dist[j] == LONG_LONG_MAX) {
                     dist[j] = dist[c] + 1;
                     li.push(j);
                     path[j] = c;
                 }
             }
+
+            rev(m, LONG_LONG_MAX);
 
             if (!fu) {
                 break;
