@@ -39,28 +39,43 @@ ifstream fin;
 
 int a[30], b[30];
 
-int ae[20], be[20];
 
 void solve()
 {
     int n, m1, m2;
     cin >> n >> m1 >> m2;
 
-    memset(ae, 0, sizeof(ae));
-    memset(be, 0, sizeof(be));
+    vi finqueue(m1, 0);
+    vi taskA(n, 0);
+    vi apath, bpath;
 
-    FOR(i, m1) {
-        cin >> a[i];
-        ae[a[i]] += 1;
+    for (int i = 0; i < m1; i++) {
+        int tmp;
+        cin >> tmp;
+        apath.push_back(tmp);
     }
 
-    FOR(i, m2) {
-        cin >> b[i];
-        be[b[i]] += 1;
+    for (int i = 0; i < m2; i++) {
+        int tmp;
+        cin >> tmp;
+        bpath.push_back(tmp);
     }
-
-    int i = 0;
-    while (true) {}
+    
+    for (int i = 0; i < n; i++) {
+        int minfinish = INT_MAX;
+        int index = -1;
+        
+        for (int j = 0; j < M1; j++) {
+            if (finqueue[j] + apath[j] < minfinish)
+            {
+                minfinish = finqueue[j] + apath[j];
+                index = j;
+            }
+        }
+        finqueue[index] += apath[index];
+        atime = finqueue[index];
+        taskA[i] = minfinish;
+    }
 
 }
 
