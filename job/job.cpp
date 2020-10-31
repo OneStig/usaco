@@ -29,7 +29,7 @@ using vpd = vector<pd>;
 
 #define FOR(i, a, b) for (int i = (a); i < (b); ++i)
 #define FOR0(i, a) FOR(i, 0, a)
-#define RFOR(i, a, b) for (int i = (b)-1; i >= (a); --i)
+#define RFOR(i, a, b) for (int i = (a)-1; i >= (b); --i)
 #define RFOR0(i, a) ROF(i, 0, a)
 
 ofstream fout;
@@ -37,16 +37,16 @@ ifstream fin;
 
 // End of template
 
-int a[30], b[30];
-
-
 void solve()
 {
     int n, m1, m2;
+    int atot = 0;
     cin >> n >> m1 >> m2;
 
-    vi finqueue(m1, 0);
+    vi timeline(m1, 0);
     vi taskA(n, 0);
+    vi ttimeline(m2, 0);
+    vi taskB(n, 0);
     vi apath, bpath;
 
     for (int i = 0; i < m1; i++) {
@@ -61,22 +61,45 @@ void solve()
         bpath.push_back(tmp);
     }
     
+
     for (int i = 0; i < n; i++) {
-        int minfinish = INT_MAX;
-        int index = -1;
+        int mf = INT_MAX;
+        int ind;
         
-        for (int j = 0; j < M1; j++) {
-            if (finqueue[j] + apath[j] < minfinish)
+        for (int j = 0; j < m1; j++) {
+            if (timeline[j] + apath[j] < mf)
             {
-                minfinish = finqueue[j] + apath[j];
-                index = j;
+                mf = timeline[j] + apath[j];
+                ind = j;
             }
         }
-        finqueue[index] += apath[index];
-        atime = finqueue[index];
-        taskA[i] = minfinish;
+        timeline[ind] += apath[ind];
+        atot = timeline[ind];
+        taskA[i] = mf;
     }
 
+    RFOR(i,n,0) {
+        int mf = INT_MAX;
+        int ind = -1;
+
+        FOR0(j, m2) {
+            if (ttimeline[j] + bpath[j] < mf) {
+                mf = ttimeline[j] + bpath[j];
+                ind = j;
+            }
+        }
+
+        ttimeline[ind] += bpath[ind];
+        taskB[i] = mf;
+    }
+
+    int last = 0;
+
+    FOR0(i, n) {
+        last = max(last, taskA[i] + taskB[i]);
+    }
+
+    cout << atot << " " << last << endl;
 }
 
 int main()
