@@ -39,82 +39,79 @@ ifstream fin;
 
 // End of template
 
-ll ditch[200][200];
-vi con[200];
+ll grid[200][200], sol, minm;
+vi children[200], p;
+int s;
 
-ll fu;
-vi path;
-
-void rev(int a, ll minm) {
-    if (a == 0) {
-        fu = minm;
+void recur(int pi, ll sedge)
+{
+    if (pi == s)
+    {
+        minm = sedge;
         return;
     }
 
-    if (path[a] != -1) {
-        rev(path[a], min(minm, ditch[path[a]][a]));
-        ditch[path[a]][a] -= fu;
-        ditch[a][path[a]] += fu;
+    if (p[pi] != -1)
+    {
+        recur(p[pi], min(sedge, grid[p[pi]][pi]));
+        grid[pi][p[pi]] += minm;
+        grid[p[pi]][pi] -= minm;
     }
 }
 
 void solve()
 {
-    ll sol = 0;
     int n, m;
     cin >> n >> m;
+    
+    memset(grid, 0, sizeof(0));
 
-    memset(ditch, 0, sizeof(ditch));
+    s = 0;
 
-    FOR0(i, n) {
+    FOR0(i, n)
+    {
         int s, e, c;
         cin >> s >> e >> c;
-        ditch[s][e] += c;
-        con[s].push_back(e);
-        con[e].push_back(s);
+        grid[--s][--e] += c;
+        children[s].push_back(e);
+        children[e].push_back(s);
     }
 
-    m--;
-
-    for (int i = 0; true;) {
+    sol = 0;
+    while (1)
+    {
+        minm = 0;
         vi dist(200, INT_MAX);
-        dist[i] = 0;
-
-        queue<int> li;
-        li.push(i);
-        path.assign(200, -1);
-
-        fu = 0;
-
-        while(true) {
-            if (li.empty()) {
+        dist[s] = 0;
+        p.assign(200, -1);
+        queue<int> q;
+        q.push(s);
+        
+        while (!q.empty())
+        {
+            int fr = q.front();
+            q.pop();
+            if (fr == m - 1) {
                 break;
             }
-
-            int c = li.front();
-
-            if (m == c) {
-                break;
+            
+            for (int child : children[fr]) {
+                if (dist[child] == INT_MAX && grid[fr][child] > 0 ) {
+                    dist[child] = dist[fr] + 1;
+                    q.push(child);
+                    p[child] = fr;
+                }     
             }
-
-            li.pop();
-
-            for (auto& j : con[c]) {
-                if (0 < ditch[c][j] && dist[j] == LONG_LONG_MAX) {
-                    dist[j] = dist[c] + 1;
-                    li.push(j);
-                    path[j] = c;
-                }
-            }
-
-            rev(m, LONG_LONG_MAX);
-
-            if (!fu) {
-                break;
-            }
-
-            sol += fu;
+                
         }
+
+        recur(m - 1, INT_MAX);
+
+        if (minm == 0) {
+            break;
+        }
+            
+        sol += minm;
     }
 
     cout << sol << endl;
