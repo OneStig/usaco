@@ -11,6 +11,7 @@ LANG: C++
 using namespace std;
 
 using ll = long long;
+using ull = unsigned long long;
 using ld = long double;
 using db = double;
 
@@ -39,14 +40,71 @@ ifstream fin;
 
 // End of template
 
+struct BigNumber {
+    short d[200];
+    int size;
+};
+
+BigNumber addition(BigNumber a, BigNumber b) {
+    BigNumber c;
+    memset(c.d, 0, sizeof(c.d));
+    int carry = 0;
+
+    for (int pos = 0; pos < max(a.size, b.size); pos++) {
+        c.d[pos] = a.d[pos] + b.d[pos] + carry;
+        carry = c.d[pos] / 10;
+        c.d[pos] = c.d[pos] % 10;
+    }
+
+    if (carry) {
+        c.d[max(a.size, b.size)] = carry;
+        c.size = max(a.size, b.size) + 1;
+    }
+    else {
+        c.size = max(a.size, b.size);
+    }
+
+    return c;
+}
+
+BigNumber subtraction(BigNumber a, BigNumber b) {
+    BigNumber c;
+
+    int borrow = 0;
+    for (int pos = 0; pos < max(a.size, b.size); pos++) {
+        c.d[pos] = a.d[pos] - b.d[pos] - borrow;
+        if (c.d[pos] < 0) {
+            c.d[pos] = c.d[pos] + 10;
+            borrow = 1;
+        }
+        else {
+            borrow = 0;
+        }
+
+        if (!c.d[pos]) {
+            c.size = pos;
+        }
+    }
+
+    return c;
+}
+
 int nums[5001];
-int subseq[5001] = {1};
+BigNumber subseq[5001];
 int lg[5001];
 
 void solve()
 {
     int n;
     cin >> n;
+
+    FOR0(i, 5001) {
+        subseq[i].size = 0;
+        memset(subseq[i].d, 0, sizeof(subseq[i].d));
+    }
+
+    subseq[0].size = 1;
+    subseq[0].d[0] = 1;
 
     RFOR0(i, n + 1) {
         cin >> nums[i];
@@ -67,18 +125,20 @@ void solve()
 
         FOR0(j, i) {
             if (lg[j] == tmp && nums[j] < nums[i]) {
-                subseq[i] += subseq[j];
+                subseq[i] = addition(subseq[i], subseq[j]);
             }
         }
         FOR0(j, i) {
             if (nums[i] == nums[j] && lg[j] == lg[i]) {
-                subseq[i] -= subseq[j];
+                subseq[i] = subtraction(subseq[i], subseq[j]);
             }
         }
     }
 
     int sol = 0;
-    ll count = 0;
+    BigNumber count;
+    count.size = 0;
+    memset(count.d, 0, sizeof(count.d));
 
     FOR(i, 1, n + 1) {
         sol = max(sol, lg[i]);
@@ -86,11 +146,17 @@ void solve()
 
     FOR(i, 1, n + 1) {
         if (lg[i] == sol) {
-            count += subseq[i];
+            count = addition(count, subseq[i]);
         }
     }
 
-    cout << sol << " " << count << endl;
+    cout << sol << " ";
+
+    for (int i = count.size - 1; i >= 0; i--) {
+        cout << count.d[i];
+    }
+
+    cout << endl;
 }
 
 int main()

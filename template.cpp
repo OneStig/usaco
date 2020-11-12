@@ -30,7 +30,7 @@ using vpd = vector<pd>;
 #define FOR(i, a, b) for (int i = (a); i < (b); ++i)
 #define FOR0(i, a) FOR(i, 0, a)
 #define RFOR(i, a, b) for (int i = (b)-1; i >= (a); --i)
-#define RFOR0(i, a) ROF(i, 0, a)
+#define RFOR0(i, a) RFOR(i, 0, a)
 
 #define pb push_back;
 
