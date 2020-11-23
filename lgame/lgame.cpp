@@ -43,6 +43,7 @@ int values[] {
 
 int alph[26];
 int oc[26];
+int od[26];
 vi posi;
 
 int val(string s) {
@@ -104,13 +105,29 @@ void solve()
         sol = max(sol, val(s));
     }
 
-    cout << sol << endl;
+    for (string i : sm) {
+        memset(oc, 0, sizeof(oc));
 
-    for (string s : d) {
-        if (val(s) == sol) {
-            cout << s << endl;
+        FOR0(k, i.length()) {
+            oc[i[k] - 'a']++;
+        }
+        for (string j : sm) {
+            memset(od, 0, sizeof(od));
+            int valid = 1;
+            FOR0(k, j.length()) {
+                if (++od[j[k] - 'a'] + oc[j[k] - 'a'] > alph[j[k] - 'a']) {
+                    valid = 0;
+                    break;
+                }
+            }
+
+            if (valid) {
+                sol = max(sol, val(i) + val(j));
+            }
         }
     }
+
+    cout << sol << endl;
 }
 
 int main()
