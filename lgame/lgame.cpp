@@ -46,6 +46,12 @@ int oc[26];
 int od[26];
 vi posi;
 
+vs d;
+
+vector<pair<string, string>> anslist;
+
+int sol = 0;
+
 int val(string s) {
     int sc = 0;
 
@@ -54,6 +60,25 @@ int val(string s) {
     }
 
     return sc;
+}
+
+void doub(string a, string b) {
+    if (binary_search(d.begin(), d.end(), a) && binary_search(d.begin(), d.end(), b)) {
+        int sum = val(a) + val(b);
+
+        if (sum >= sol) {
+            if (a > b || a == "") {
+                swap(a, b);
+            }
+
+            if (sum > sol) {
+                sol = sum;
+                anslist.clear();
+            }
+            
+            anslist.push_back(make_pair(a, b));
+        }
+    }
 }
 
 void solve()
@@ -70,8 +95,9 @@ void solve()
         posi.push_back(scrab[i] - 'a');
     }
 
-    vs d;
-    vs sm;
+    sort(scrab.begin(), scrab.end());
+
+    d.push_back("");
 
     string in;
 
@@ -92,42 +118,37 @@ void solve()
 
         if (valid) {
             d.push_back(in);
-
-            if (in.length() <= 4) {
-                sm.push_back(in);
-            }
         } 
     }
 
-    int sol = 0;
+    int r = 1;
 
-    for (string s : d) {
-        sol = max(sol, val(s));
-    }
+    while (r) {
+        FOR(i, 3, scrab.length() + 1) {
+            doub("", scrab.substr(0, i));
 
-    for (string i : sm) {
-        memset(oc, 0, sizeof(oc));
-
-        FOR0(k, i.length()) {
-            oc[i[k] - 'a']++;
-        }
-        for (string j : sm) {
-            memset(od, 0, sizeof(od));
-            int valid = 1;
-            FOR0(k, j.length()) {
-                if (++od[j[k] - 'a'] + oc[j[k] - 'a'] > alph[j[k] - 'a']) {
-                    valid = 0;
-                    break;
-                }
-            }
-
-            if (valid) {
-                sol = max(sol, val(i) + val(j));
+            for (int j = 3; j + i < scrab.length() + 1; j++) {
+                doub(scrab.substr(0, i), scrab.substr(i, j));
             }
         }
+
+        r = next_permutation(scrab.begin(), scrab.end());
     }
 
     cout << sol << endl;
+
+    sort(anslist.begin(), anslist.end());
+    anslist.erase(unique(anslist.begin(), anslist.end()), anslist.end());
+
+    FOR0(i, anslist.size()) {
+        cout << anslist[i].first;
+
+        if (anslist[i].second != "") {
+            cout << " " << anslist[i].second;
+        }
+
+        cout << endl;
+    }
 }
 
 int main()
