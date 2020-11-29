@@ -34,9 +34,6 @@ using vpd = vector<pd>;
 
 #define pb push_back;
 
-ofstream fout;
-ifstream fin;
-
 // End of template
 
 vi points[51];
@@ -57,8 +54,33 @@ int bfs(int u) {
         }
 
         FOR0(i, points[k].size()) {
-            if (points[k][i] != u && !visited[points[k][i]]) {
+            if (points[k][i] != u && visited[points[k][i]] != 1) {
                 visited[points[k][i]] = 1;
+                q.push(points[k][i]);
+            }
+        }
+    }
+
+    return 1;
+}
+
+int afs(int u) {
+    queue<int> q;
+    q.push(u);
+    visited[u] = 2;
+
+    while (!q.empty()) {
+        int k = q.front();
+        q.pop();
+
+        FOR0(i, points[k].size()) {
+            int tmp = points[k][i];
+            if  (visited[points[k][i]] == 1) {
+                return false;
+            }
+
+            if (visited[points[k][i]] != 2) {
+                visited[points[k][i]] = 2;
                 q.push(points[k][i]);
             }
         }
@@ -69,7 +91,7 @@ int bfs(int u) {
 
 void solve()
 {
-    n = -1;
+    n = 0;
     while (1) {
         int t;
         while (cin >> t) {
@@ -77,15 +99,17 @@ void solve()
                 break;
             }
 
-            points[n + 1].push_back(t);
+            points[n].push_back(t);
         }
 
         if (t == -1) {
             break;
         }
-
+        
         n++;
     }
+
+    n--;
 
     int fn = 0;
     int sn = 0;
@@ -93,8 +117,10 @@ void solve()
     FOR(i, 1, n) {
         memset(visited, 0, sizeof(visited));
         if (bfs(i)) {
-            fp[fn] = i;
-            fn++;
+            fp[fn++] = i;
+            if (afs(i)) {
+               sp[sn++] = i;
+            }
         }
     }
 
@@ -103,6 +129,14 @@ void solve()
     FOR0(i, fn) {
         cout << " " << fp[i];
     }
+
+    cout << endl << sn;
+
+    FOR0(i, sn) {
+        cout << " " << sp[i];
+    }
+
+    cout << endl;
 }
 
 int main()
